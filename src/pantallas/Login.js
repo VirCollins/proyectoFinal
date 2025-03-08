@@ -55,7 +55,7 @@ const Login = () => {
             
           if (obtenerIdResult.exito) {
             const usuarioId = obtenerIdResult.id;
-           // Bitacora.saveBitacora("Ingresando al sistema", usuarioId);
+           Bitacora.saveBitacora("Ingresando al sistema", usuarioId);
           } else {
             console.log("Error al obtener el ID:", obtenerIdResult.mensaje);
           }
@@ -104,7 +104,7 @@ const Login = () => {
         onChangeText={text => setClave(text)}
       />
       <Boton text="Entrar" ColorFondo='#0000ff' onPress={verificaruser} />
-      <Boton text="registrar" ColorFondo='#0000ff' onPress={Registrar} />
+      
     </View>
   )
 }

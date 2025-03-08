@@ -55,7 +55,7 @@ const saveBitacora = async (descrip, usuario) => {
   const { marca, modelo } = getDeviceDetails();
 
   try {
-    const response = await fetch("http://192.168.100.122/ExamenBacken/backend1/bitacora_save.php", {
+    const response = await fetch("http://phpbacken123.whf.bz/ExamenBacken/backend1/bitacora_save.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

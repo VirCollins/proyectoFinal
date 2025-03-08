@@ -13,7 +13,8 @@ const VerBitacora = () => {
   const fetchData = (selectedDate) => {
     const formattedDate = selectedDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
     setLoading(true);
-    var fechaUrl = `${Ubicacion.API_URL}bitacora_get.php?fecha=${formattedDate}`;
+    var fechaUrl = `http://phpbacken123.whf.bz/ExamenBacken/backend1/bitacora_get.php?fecha=${formattedDate}`;
+
  
     fetch(fechaUrl)
       .then((response) => response.json())
