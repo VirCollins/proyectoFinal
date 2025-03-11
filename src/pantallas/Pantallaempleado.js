@@ -3,71 +3,63 @@ import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image } from 'react
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
-const Pantallaempleado = () => {
+const Pantallaempleado = ({ route }) => {
     const navigation = useNavigation();
-    const [userStatus, setUserStatus] = useState(null); // Para almacenar el estado del usuario (ACTIVO/INACTIVO)
-    const [usuario, setUserName] = useState(''); // Nombre del usuario (esto lo puedes obtener dinámicamente, por ejemplo, desde la sesión)
+    const [modulosActivos, setModulosActivos] = useState([]);
+    const usuario = route.params?.usuario || '';  
 
-    // Array de botones
     const buttonList = [
-        { id: '1', title: 'usuario', screen: 'Usuario' },
-        { id: '2', title: 'bitacora', screen: 'VerBitacora' },
-        { id: '3', title: 'GPS', screen: 'NADA' },
-        { id: '4', title: 'cliente', screen: 'IngresoFoto' },
-        { id: '5', title: 'Producto', screen: 'Notifications' },
-        { id: '6', title: 'Accesos', screen: 'Notifications' },
-        { id: '7', title: 'DesbloquearUsuario', screen: 'PantallaReset' }
+        { id: '1', title: 'Usuario', screen: 'Usuario', modulo_codigo: 1 },
+        { id: '2', title: 'Bitácora', screen: 'VerBitacora', modulo_codigo: 2 },
+        { id: '3', title: 'GPS', screen: 'GPS', modulo_codigo: 3 },
+        { id: '4', title: 'Cliente', screen: 'IngresoFoto', modulo_codigo: 4 },
+        { id: '5', title: 'Producto', screen: 'Notifications', modulo_codigo: 5 },
+        { id: '6', title: 'Accesos', screen: 'Notifications', modulo_codigo: 6 },
+        { id: '7', title: 'Desbloquear Usuario', screen: 'PantallaReset', modulo_codigo: 7 }
     ];
 
     useEffect(() => {
-        const fetchUserStatus = async () => {
+        if (!usuario) return;  
+
+        const fetchUserAccess = async () => {
             try {
                 const response = await axios.post('http://phpbacken123.whf.bz/ExamenBacken/backend1/VerificarBotones.php', {
-                    Usuario: usuario, 
+                    Usuario: usuario,
                 });
 
                 if (response.data.exito) {
-                    setUserStatus(response.data.estado); 
-                } else {
-                    console.log("Error: " + response.data.mensaje);
+                    const modulosNumericos = response.data.modulos.map(modulo => Number(modulo.codigo));
+                    setModulosActivos(modulosNumericos);  
                 }
             } catch (error) {
-                console.error('Error al obtener el estado del usuario:', error);
+                console.error('Error al obtener los módulos del usuario:', error);
             }
         };
-
-        if (usuario) { 
-            fetchUserStatus();
-        }
-    }, [usuario]); 
+        
+        fetchUserAccess();
+    }, [route.params]);  
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Home Screen</Text>
+            <Text style={styles.title}>Módulos Disponibles</Text>
 
             <FlatList
-                data={buttonList}
+                data={buttonList.filter(item => modulosActivos.includes(Number(item.modulo_codigo)))}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => {
-                    // Solo mostrar los botones si el usuario está "ACTIVO"
-                    if (userStatus === 'ACTIVO' || item.screen !== 'NADA') {
-                        return (
-                            <TouchableOpacity
-                                style={styles.button}
-                                onPress={() => navigation.navigate(item.screen)}
-                            >
-                                <Image source={require('../../assets/perfil.png')} style={styles.icon} />
-                                <Text style={styles.cardText}>{item.title}</Text>
-                            </TouchableOpacity>
-                        );
-                    }
-                    return null;
-                }}
-                showsVerticalScrollIndicator={false} // Hides vertical scrollbar
+                renderItem={({ item }) => (
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => navigation.navigate(item.screen)} 
+                    >
+                        <Image source={require('../../assets/perfil.png')} style={styles.icon} />
+                        <Text style={styles.cardText}>{item.title}</Text>
+                    </TouchableOpacity>
+                )}
+                showsVerticalScrollIndicator={false}
             />
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -84,23 +76,37 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     cardText: {
-        alignContent: 'center',
+        textAlign: 'center',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     button: {
-        flexDirection: 'row', // Aligns icon & text horizontally
+        flexDirection: 'row',
         backgroundColor: '#e6e6df',
         paddingVertical: 15,
         paddingHorizontal: 20,
-        borderRadius: 20, // Rounded corners
+        borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 10, // Optional: add some space between buttons
+        marginBottom: 10,
     },
     icon: {
-        width: 100,  // Set the width of the icon
-        height: 100, // Set the height of the icon
-        marginRight: 10, // Space between the icon and text
+        width: 50,
+        height: 50,
+        marginRight: 10,
     }
 });
 
 export default Pantallaempleado;
+
+
+
+
+
+
+
+
+
+
+
+

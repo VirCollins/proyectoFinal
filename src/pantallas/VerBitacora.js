@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, Button, FlatList, Platform, StyleSheet, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Ubicacion from '../componentes/Ubicacion';
+
 const VerBitacora = () => {
   const navigation = useNavigation();
   const [data, setData] = useState([]);
@@ -11,11 +11,13 @@ const VerBitacora = () => {
   const [showPicker, setShowPicker] = useState(false);
   
   const fetchData = (selectedDate) => {
-    const formattedDate = selectedDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
+    const formattedDate = selectedDate.getFullYear() + '-' + 
+                          String(selectedDate.getMonth() + 1).padStart(2, '0') + '-' + 
+                          String(selectedDate.getDate()).padStart(2, '0');
+    
     setLoading(true);
     var fechaUrl = `http://phpbacken123.whf.bz/ExamenBacken/backend1/bitacora_get.php?fecha=${formattedDate}`;
 
- 
     fetch(fechaUrl)
       .then((response) => response.json())
       .then((json) => {
@@ -65,7 +67,7 @@ const VerBitacora = () => {
       <Button title="Generar" onPress={() => fetchData(date)} />
       <FlatList
         data={data}
-        keyExtractor={(item) => `${item.usuario_id}-${item.bitacora_fecha}`}
+        keyExtractor={(item, index) => `${item.usuario_id}-${item.bitacora_fecha}-${index}`}
         ListHeaderComponent={() => (
           <View style={{ flexDirection: 'row', padding: 10, backgroundColor: '#ddd' }}>
             <Text style={{ flex: 1, fontWeight: 'bold' }}>Usuario</Text>
@@ -97,6 +99,7 @@ const styles = StyleSheet.create({
 });
 
 export default VerBitacora;
+
 
 
 

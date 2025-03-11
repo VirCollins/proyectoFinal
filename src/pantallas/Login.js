@@ -46,19 +46,16 @@ const Login = () => {
         });
         const obtenerIdResult = await obtenerIdResponse.json();
 
-        if (verificarResult == 'exito') {
-            if (Usuario == 'ilsw') {
-                navigation.navigate('Principal');
-            } else {
-                navigation.navigate('Pantallaempleado');
-            }
+        if (verificarResult == 'exito') { 
+                // Aquí pasamos el usuario como parámetro
+                navigation.navigate('Pantallaempleado', { usuario: Usuario });
             
-          if (obtenerIdResult.exito) {
-            const usuarioId = obtenerIdResult.id;
-           Bitacora.saveBitacora("Ingresando al sistema", usuarioId);
-          } else {
-            console.log("Error al obtener el ID:", obtenerIdResult.mensaje);
-          }
+            if (obtenerIdResult.exito) {
+                const usuarioId = obtenerIdResult.id;
+               Bitacora.saveBitacora("Ingresando al sistema", usuarioId);
+            } else {
+                console.log("Error al obtener el ID:", obtenerIdResult.mensaje);
+            }
         } else {
             alert('Usuario o Clave Incorrecto');
             n++;
@@ -70,13 +67,14 @@ const Login = () => {
                 });
                 alert('Ha alcanzado el máximo de intentos fallidos. Su cuenta ha sido bloqueada.');
                 const usuarioId = obtenerIdResult.id;
-               // Bitacora.saveBitacora("La cuenta ha sido Bloqueada", usuarioId);
+                Bitacora.saveBitacora("La cuenta ha sido Bloqueada", usuarioId);
             }
         }
     } catch (error) {
         alert(error);
     }
 };
+
   
 
   const Registrar = async () =>

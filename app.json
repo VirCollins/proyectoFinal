@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "tarea1",
-    "slug": "tarea1",
+    "name": "nombreproy",
+    "slug": "nombreproy",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
