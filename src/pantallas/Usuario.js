@@ -29,7 +29,7 @@ export default function App() {
     // Obtener usuarios desde el backend
     const fetchUsers = async () => {
         try {
-            const response = await fetch("http://phpbacken123.whf.bz/ExamenBacken/backend1/usuario.php", {
+            const response = await fetch("http://phpbacken123.whf.bz/ProyectoFinalBacken/usuario.php", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -51,7 +51,7 @@ export default function App() {
     // Activar o desactivar usuario
     const toggleUserStatus = async (usuario_id, nuevo_estado) => {
         try {
-            const response = await fetch("http://phpbacken123.whf.bz/ExamenBacken/backend1/usuario.php", {
+            const response = await fetch("http://phpbacken123.whf.bz/ProyectoFinalBacken/usuario.php", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",
@@ -135,7 +135,7 @@ export default function App() {
                 type: `image/${fileType}`,
             });
 
-            const response = await fetch("http://192.168.100.122/ProyectoFinalBacken/usuario_save.php", {
+            const response = await fetch("http://phpbacken123.whf.bz/ProyectoFinalBacken/usuario_save.php", {
                 method: "POST",
                 headers: {
                     "Content-Type": "multipart/form-data",

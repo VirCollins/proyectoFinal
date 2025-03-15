@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Text, View,StyleSheet} from 'react-native'
 import Boton from '../componentes/Boton';
+import CampoTexto from '../componentes/CampoTexto';
 import { useNavigation } from '@react-navigation/native';
 
 

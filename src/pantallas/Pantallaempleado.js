@@ -23,7 +23,7 @@ const Pantallaempleado = ({ route }) => {
 
         const fetchUserAccess = async () => {
             try {
-                const response = await axios.post('http://192.168.100.122/ProyectoFinalBacken/VerificarBotones.php', {
+                const response = await axios.post('http://phpbacken123.whf.bz/ProyectoFinalBacken/VerificarBotones.php', {
                     Usuario: usuario,
                 });
 
