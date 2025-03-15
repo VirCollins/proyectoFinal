@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, Button, FlatList, Platform, StyleSheet, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Ubicacion from '../componentes/Ubicacion';
 
 const VerBitacora = () => {
   const navigation = useNavigation();

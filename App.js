@@ -13,6 +13,7 @@ import VerBitacora from './src/pantallas/VerBitacora';
 import Principal from './src/pantallas/Principal';
 import Usuario from './src/pantallas/Usuario';
 import GPS from './src/pantallas/GPS';
+import AsignarModulos from './src/pantallas/AsignarModulos';
 
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +42,7 @@ export default function App() {
         <Stack.Screen name="PantallaReset" component={PantallaReset} />
         <Stack.Screen name="Usuario" component={Usuario} />
         <Stack.Screen name="GPS" component={GPS} />
+        <Stack.Screen name="AsignarModulos" component={AsignarModulos}/> 
       </Stack.Navigator>
     </NavigationContainer>
   );

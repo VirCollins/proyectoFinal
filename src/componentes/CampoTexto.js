@@ -21,15 +21,22 @@ export class CampoTexto extends Component {
 }
 
 const styles = StyleSheet.create({
-    container: {
-      backgroundColor: '#ffffff',
-      width: '90%',
-      borderColor:'#e8e8e8',
-      borderWidth: 1,
-      borderRadius: 5,
-      paddingHorizontal: 10,
-      marginVertical: 10,
-    }
+  container: {
+    backgroundColor: '#FFFFFF', 
+    width: '90%',
+    borderColor: '#0A3D91',  
+    borderWidth: 2,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    height: 45,  
+    shadowColor: '#000',  
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3, 
+  }
 });
+
 
 export default CampoTexto

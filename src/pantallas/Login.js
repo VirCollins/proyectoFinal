@@ -16,21 +16,8 @@ const Login = () => {
 
   const verificaruser = async () => {
     try {
-        var bloqueoUrl = `${Ubicacion.API_URL}` + "bloqueado.php";
+
         var verificarUrl = `${Ubicacion.API_URL}` + "verifusuario.php";
-        var obtenerIdUrl = `${Ubicacion.API_URL}`+"obtenerid.php";
-
-        const bloqueoResponse = await fetch(bloqueoUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ Usuario: Usuario })
-        });
-        const bloqueoResult = await bloqueoResponse.json();
-
-        if (bloqueoResult == 'si esta block') {
-            alert('Usuario bloqueado. Por favor contacte al administrador.');
-            return;
-        }
 
         const verificarResponse = await fetch(verificarUrl, {
             method: 'POST',
@@ -39,36 +26,11 @@ const Login = () => {
         });
         const verificarResult = await verificarResponse.json();
 
-        const obtenerIdResponse = await fetch(obtenerIdUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ Usuario: Usuario, Clave: Clave })
-        });
-        const obtenerIdResult = await obtenerIdResponse.json();
-
         if (verificarResult == 'exito') { 
                 // Aquí pasamos el usuario como parámetro
                 navigation.navigate('Pantallaempleado', { usuario: Usuario });
-            
-            if (obtenerIdResult.exito) {
-                const usuarioId = obtenerIdResult.id;
-               Bitacora.saveBitacora("Ingresando al sistema", usuarioId);
-            } else {
-                console.log("Error al obtener el ID:", obtenerIdResult.mensaje);
-            }
         } else {
             alert('Usuario o Clave Incorrecto');
-            n++;
-            if (n >= 3) {
-                await fetch(bloqueoUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ Usuario: Usuario, bloquear: true })
-                });
-                alert('Ha alcanzado el máximo de intentos fallidos. Su cuenta ha sido bloqueada.');
-                const usuarioId = obtenerIdResult.id;
-                Bitacora.saveBitacora("La cuenta ha sido Bloqueada", usuarioId);
-            }
         }
     } catch (error) {
         alert(error);
@@ -79,7 +41,7 @@ const Login = () => {
 
   const Registrar = async () =>
     {
-      navigation.navigate('Usuario')
+      navigation.navigate('Registrar')
     }
 
   return (
@@ -101,7 +63,8 @@ const Login = () => {
         setValor={setClave}
         onChangeText={text => setClave(text)}
       />
-      <Boton text="Entrar" ColorFondo='#0000ff' onPress={verificaruser} />
+      <Boton text="Entrar" ColorFondo='#0A3D91' onPress={verificaruser} />
+      <Boton text="Se le olvido la contraseña" ColorFondo='#0A3D91' onPress={Registrar} />
       
     </View>
   )
@@ -112,8 +75,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#A3D5FF', 
   },
 });
+
 
 export default Login;

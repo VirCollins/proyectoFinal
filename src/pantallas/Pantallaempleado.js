@@ -10,12 +10,12 @@ const Pantallaempleado = ({ route }) => {
 
     const buttonList = [
         { id: '1', title: 'Usuario', screen: 'Usuario', modulo_codigo: 1 },
-        { id: '2', title: 'Bitácora', screen: 'VerBitacora', modulo_codigo: 2 },
-        { id: '3', title: 'GPS', screen: 'GPS', modulo_codigo: 3 },
-        { id: '4', title: 'Cliente', screen: 'IngresoFoto', modulo_codigo: 4 },
-        { id: '5', title: 'Producto', screen: 'Notifications', modulo_codigo: 5 },
-        { id: '6', title: 'Accesos', screen: 'Notifications', modulo_codigo: 6 },
-        { id: '7', title: 'Desbloquear Usuario', screen: 'PantallaReset', modulo_codigo: 7 }
+        { id: '2', title: 'Producto', screen: 'VerBitacora', modulo_codigo: 2 },
+        { id: '3', title: 'Cita Paciente', screen: 'GPS', modulo_codigo: 3 },
+        { id: '4', title: 'Dianostico', screen: 'IngresoFoto', modulo_codigo: 4 },
+        { id: '5', title: 'Accesos', screen: 'AsignarModulos', modulo_codigo: 5 },
+        { id: '6', title: 'Desbloquear usuario', screen: 'PantallaReset', modulo_codigo: 6 },
+        { id: '7', title: 'GPS', screen: 'GPS', modulo_codigo: 7 }
     ];
 
     useEffect(() => {
@@ -23,7 +23,7 @@ const Pantallaempleado = ({ route }) => {
 
         const fetchUserAccess = async () => {
             try {
-                const response = await axios.post('http://phpbacken123.whf.bz/ExamenBacken/backend1/VerificarBotones.php', {
+                const response = await axios.post('http://192.168.100.122/ProyectoFinalBacken/VerificarBotones.php', {
                     Usuario: usuario,
                 });
 
@@ -64,7 +64,7 @@ const Pantallaempleado = ({ route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#A3D5FF',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,
@@ -79,10 +79,11 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 16,
         fontWeight: 'bold',
+        color: '#FFFF'
     },
     button: {
         flexDirection: 'row',
-        backgroundColor: '#e6e6df',
+        backgroundColor: '#0A3D91',
         paddingVertical: 15,
         paddingHorizontal: 20,
         borderRadius: 20,
