@@ -29,7 +29,7 @@ export default function App() {
     // Obtener usuarios desde el backend
     const fetchUsers = async () => {
         try {
-            const response = await fetch("http://phpbacken123.whf.bz/ProyectoFinalBacken/usuario.php", {
+            const response = await fetch("http://arturo.bonaquian.com/ProyectoFinalBacken/usuario.php", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -51,7 +51,7 @@ export default function App() {
     // Activar o desactivar usuario
     const toggleUserStatus = async (usuario_id, nuevo_estado) => {
         try {
-            const response = await fetch("http://phpbacken123.whf.bz/ProyectoFinalBacken/usuario.php", {
+            const response = await fetch("http://arturo.bonaquian.com/ProyectoFinalBacken/usuario.php", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",
@@ -135,7 +135,7 @@ export default function App() {
                 type: `image/${fileType}`,
             });
 
-            const response = await fetch("http://phpbacken123.whf.bz/ProyectoFinalBacken/usuario_save.php", {
+            const response = await fetch("http://arturo.bonaquian.com/ProyectoFinalBacken/usuario_save.php", {
                 method: "POST",
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -172,7 +172,7 @@ export default function App() {
 
     return (
         <ScrollView style={styles.container}>
-            <Text style={styles.title}>Mantenimiento de Usuarios</Text>
+            <Text style={styles.title}>Crear de Usuarios</Text>
 
             <Button title="Listar Usuarios" onPress={openUserListModal} />
             <View style={styles.space} />
@@ -188,19 +188,19 @@ export default function App() {
                         data={paginatedUsers}
                         keyExtractor={(item) => item.usuario_id}
                         ListHeaderComponent={() => (
-                            <View style={{ flexDirection: "row", padding: 10, backgroundColor: "#ddd" }}>
-                                <Text style={{ flex: 1, fontWeight: "bold" }}>ID</Text>
-                                <Text style={{ flex: 2, fontWeight: "bold" }}>Nombre</Text>
-                                <Text style={{ flex: 1, fontWeight: "bold" }}>Estado</Text>
-                                <Text style={{ flex: 2, fontWeight: "bold" }}>Acciones</Text>
+                            <View style={styles.tableHeader}>
+                                <Text style={styles.tableHeaderText}>ID</Text>
+                                <Text style={styles.tableHeaderText}>Nombre</Text>
+                                <Text style={styles.tableHeaderText}>Estado</Text>
+                                <Text style={styles.tableHeaderText}>Acciones</Text>
                             </View>
                         )}
                         renderItem={({ item }) => (
-                            <View style={{ flexDirection: "row", padding: 10, borderBottomWidth: 1 }}>
-                                <Text style={{ flex: 1 }}>{Number(item.usuario_id)}</Text>
-                                <Text style={{ flex: 2 }}>{item.usuario_nombre}</Text>
-                                <Text style={{ flex: 1 }}>{item.usuario_estado}</Text>
-                                <View style={{ flex: 2 }}>
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableCell}>{Number(item.usuario_id)}</Text>
+                                <Text style={styles.tableCell}>{item.usuario_nombre}</Text>
+                                <Text style={styles.tableCell}>{item.usuario_estado}</Text>
+                                <View style={styles.tableCell}>
                                     <Button
                                         title={item.usuario_estado === "ACTIVO" ? "Desactivar" : "Activar"}
                                         onPress={() => toggleUserStatus(item.usuario_id, item.usuario_estado === "ACTIVO" ? "INACTIVO" : "ACTIVO")}
@@ -229,7 +229,7 @@ export default function App() {
             <Picker
                 selectedValue={cargo}
                 onValueChange={(itemValue) => setCargo(itemValue)}
-                style={styles.input}
+                style={styles.seleccion}
             >
                 <Picker.Item label="Selecciona un cargo" value="" />
                 <Picker.Item label="Gerente" value="Gerente" />
@@ -239,46 +239,38 @@ export default function App() {
             </Picker>
 
             <Button title="Tomar Foto" onPress={tomarFoto} />
-            {foto && <Image source={{ uri: foto }} style={{ width: 200, height: 200, marginTop: 20 }} />}
+            {foto && <Image source={{ uri: foto }} style={styles.foto} />}
             <View style={styles.space} />
             <Button title="Guardar" onPress={enviarDatos} />
         </ScrollView>
     );
 }
 
-// Styles
+// Estilos
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: "#fff",
-    },
-    space: {
-        height: 20, // Espacio vertical entre los botones
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: "#ccc",
-        padding: 10,
-        marginBottom: 10,
-        borderRadius: 5,
-    },
-    loadMore: {
-        backgroundColor: "#007bff",
-        padding: 10,
-        alignItems: "center",
-        marginTop: 10,
-        borderRadius: 5,
-    },
-    loadMoreText: {
-        color: "#fff",
-        fontWeight: "bold",
+        backgroundColor: "#A3D5FF",
     },
     title: {
         textAlign: "center",
         fontSize: 24,
         fontWeight: "bold",
         marginBottom: 20,
+        color: '#2A4C7B',
+    },
+    space: {
+        height: 20,
+    },
+    input: {
+        borderWidth: 2,
+        borderColor: "#ccc",
+        padding: 10,
+        marginTop:10,
+        marginBottom:5,
+        borderRadius: 5,
+        backgroundColor: "#fff",
     },
     modalContainer: {
         flex: 1,
@@ -286,16 +278,52 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
     },
     modalTitle: {
-        fontSize: 20,
+        textAlign: "center",
+        fontSize: 22,
+        marginBottom: 20,
+    },
+    tableHeader: {
+        flexDirection: "row",
+        borderBottomWidth: 1,
+        borderColor: "#ccc",
+        paddingVertical: 10,
+    },
+    tableHeaderText: {
+        flex: 1,
+        textAlign: "center",
         fontWeight: "bold",
+    },
+    tableRow: {
+        flexDirection: "row",
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderColor: "#eee",
+    },
+    tableCell: {
+        flex: 1,
         textAlign: "center",
     },
-    flatList: {
-        flex: 1,
+    loadMore: {
+        marginTop: 10,
+        paddingVertical: 10,
+        backgroundColor: "#2A4C7B",
+        alignItems: "center",
+        borderRadius: 5,
     },
-    item: {
-        padding: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: "#ccc",
+    loadMoreText: {
+        color: "#fff",
+        fontSize: 16,
     },
+    foto: {
+        width: 100,
+        height: 100,
+        borderRadius: 8,
+        marginVertical: 10,
+    }, seleccion: {
+        borderWidth: 5,
+        marginTop:10,
+        marginBottom:10,
+        backgroundColor: "#fff",
+
+    }
 });

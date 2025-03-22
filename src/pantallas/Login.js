@@ -16,26 +16,42 @@ const Login = () => {
 
   const verificaruser = async () => {
     try {
-
-        var verificarUrl = `${Ubicacion.API_URL}` + "verifusuario.php";
-
-        const verificarResponse = await fetch(verificarUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ Usuario: Usuario, Clave: Clave })
-        });
-        const verificarResult = await verificarResponse.json();
-
-        if (verificarResult == 'exito') { 
-                // Aquí pasamos el usuario como parámetro
-                navigation.navigate('Pantallaempleado', { usuario: Usuario });
-        } else {
-            alert('Usuario o Clave Incorrecto');
+      const verificarUrl = `${Ubicacion.API_URL}` + "verifusuario.php";
+  
+      const verificarResponse = await fetch(verificarUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ Usuario: Usuario, Clave: Clave })
+      });
+  
+      const responseText = await verificarResponse.text();  // Usamos `text()` para obtener la respuesta cruda
+      console.log('Respuesta cruda:', responseText);  // Veremos qué estamos recibiendo del servidor
+  
+      // Intentamos parsear la respuesta JSON
+      try {
+        const verificarResult = JSON.parse(responseText);
+  
+        // Verificamos el estado y tomamos la acción correspondiente
+        if (verificarResult.status === 'exito') {
+          alert(verificarResult.message);  // Mostrar mensaje de éxito
+          navigation.navigate('Pantallaempleado', { usuario: Usuario });
+        }else if (verificarResult.status === 'succes') {
+          alert(verificarResult.message); 
+          navigation.navigate('Pantallaempleado', { usuario: Usuario });
+        }else{
+          alert(verificarResult.message);
         }
+      } catch (jsonError) {
+        console.error('Error al parsear JSON:', jsonError);
+        alert('La respuesta del servidor no es un JSON válido.');
+      }
+  
     } catch (error) {
-        alert(error);
+      console.error('Error al verificar usuario:', error);
+      alert('Hubo un error al verificar el usuario');
     }
-};
+  };
+  
 
   
 

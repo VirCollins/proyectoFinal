@@ -14,6 +14,9 @@ import Principal from './src/pantallas/Principal';
 import Usuario from './src/pantallas/Usuario';
 import GPS from './src/pantallas/GPS';
 import AsignarModulos from './src/pantallas/AsignarModulos';
+import Productos from './src/pantallas/Productos';
+import Cita from './src/pantallas/Cita';
+import Dianostico from './src/pantallas/Dianostico'
 
 const Stack = createNativeStackNavigator();
 
@@ -42,7 +45,10 @@ export default function App() {
         <Stack.Screen name="PantallaReset" component={PantallaReset} />
         <Stack.Screen name="Usuario" component={Usuario} />
         <Stack.Screen name="GPS" component={GPS} />
-        <Stack.Screen name="AsignarModulos" component={AsignarModulos}/> 
+        <Stack.Screen name="AsignarModulos" component={AsignarModulos}/>
+        <Stack.Screen name="Productos" component={Productos}/> 
+        <Stack.Screen name="Cita" component={Cita}/>
+        <Stack.Screen name="Dianostico" component={Dianostico}/> 
       </Stack.Navigator>
     </NavigationContainer>
   );

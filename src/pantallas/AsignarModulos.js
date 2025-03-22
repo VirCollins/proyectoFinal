@@ -13,7 +13,7 @@ const AsignarModulos = () => {
 
     const fetchUsuarios = async () => {
         try {
-            const response = await fetch("http://phpbacken123.whf.bz/ProyectoFinalBacken/usuario.php");
+            const response = await fetch("http://arturo.bonaquian.com/ProyectoFinalBacken/usuario.php");
             const result = await response.json();
             setUsuarios(result);
         } catch (error) {
@@ -23,7 +23,7 @@ const AsignarModulos = () => {
 
     const fetchModulos = async (usuario_id, usuario_nombre) => {
         try {
-            const response = await fetch(`http://phpbacken123.whf.bz/ProyectoFinalBacken/Acceso.php?usuario_id=${usuario_id}`);
+            const response = await fetch(`http://arturo.bonaquian.com/ProyectoFinalBacken/Acceso.php?usuario_id=${usuario_id}`);
             const result = await response.json();
             setModulos(result);
             setUsuarioSeleccionado(usuario_id);
@@ -36,7 +36,7 @@ const AsignarModulos = () => {
     const toggleAcceso = async (usuario_id, modulo_codigo, acceso_estado) => {
         try {
             const nuevoEstado = acceso_estado === "ACTIVO" ? "INACTIVO" : "ACTIVO";
-            const response = await fetch("http://phpbacken123.whf.bz/ProyectoFinalBacken/Acceso.php", {
+            const response = await fetch("http://arturo.bonaquian.com/ProyectoFinalBacken/Acceso.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: new URLSearchParams({ usuario_id, modulo_codigo, nuevo_estado: nuevoEstado }).toString(),

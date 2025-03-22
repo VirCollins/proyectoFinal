@@ -10,9 +10,9 @@ const Pantallaempleado = ({ route }) => {
 
     const buttonList = [
         { id: '1', title: 'Usuario', screen: 'Usuario', modulo_codigo: 1 },
-        { id: '2', title: 'Producto', screen: 'VerBitacora', modulo_codigo: 2 },
-        { id: '3', title: 'Cita Paciente', screen: 'GPS', modulo_codigo: 3 },
-        { id: '4', title: 'Dianostico', screen: 'IngresoFoto', modulo_codigo: 4 },
+        { id: '2', title: 'Producto', screen: 'Productos', modulo_codigo: 2 },
+        { id: '3', title: 'Cita Paciente', screen: 'Cita', modulo_codigo: 3 },
+        { id: '4', title: 'Dianostico', screen: 'Dianostico', modulo_codigo: 4 },
         { id: '5', title: 'Accesos', screen: 'AsignarModulos', modulo_codigo: 5 },
         { id: '6', title: 'Desbloquear usuario', screen: 'PantallaReset', modulo_codigo: 6 },
         { id: '7', title: 'GPS', screen: 'GPS', modulo_codigo: 7 }
@@ -23,7 +23,7 @@ const Pantallaempleado = ({ route }) => {
 
         const fetchUserAccess = async () => {
             try {
-                const response = await axios.post('http://phpbacken123.whf.bz/ProyectoFinalBacken/VerificarBotones.php', {
+                const response = await axios.post('http://arturo.bonaquian.com/ProyectoFinalBacken/VerificarBotones.php', {
                     Usuario: usuario,
                 });
 

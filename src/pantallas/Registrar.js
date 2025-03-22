@@ -8,7 +8,6 @@ import Ubicacion from '../componentes/Ubicacion';
 const RecuperarPassword = () => {
   const navigation = useNavigation();
   const [correo, setCorreo] = useState('');
-
   const recuperarContraseña = async () => {
     try {
       const url = `${Ubicacion.API_URL}recuperar_password.php`; // La URL de tu backend PHP
@@ -19,13 +18,13 @@ const RecuperarPassword = () => {
         },
         body: JSON.stringify({ usuario_correo: correo }),
       });
-
-      const result = await response.json();
       
+      const result = await response.json();
       if (result.status === 'success') {
         // Si el correo es encontrado, redirige a la pantalla principal
         Alert.alert('Éxito', result.message);
-        navigation.navigate('PantallaPrincipal'); // Redirige a la pantalla principal
+        navigation.navigate('PantallaPrincipal', {usuario1: result.Nombre}); // Redirige a la pantalla principal
+        
       } else {
         // Si el correo no se encuentra
         Alert.alert('Error', result.message);
