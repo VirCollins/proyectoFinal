@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet } from "react-native";
+import { useTheme } from '../componentes/ThemeContext'; // Importa el hook del contexto
 
 const AsignarModulos = () => {
+    const { isNightMode } = useTheme(); // Usa el contexto para obtener el estado del modo nocturno
     const [usuarios, setUsuarios] = useState([]);
     const [modulos, setModulos] = useState([]);
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
@@ -58,33 +60,32 @@ const AsignarModulos = () => {
             console.error("Error en toggleAcceso:", error);
         }
     };
-    
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Asignar Módulos</Text>
+        <View style={[styles.container, { backgroundColor: isNightMode ? '#121212' : '#A3D5FF' }]}>
+            <Text style={[styles.title, { color: isNightMode ? '#FFFFFF' : '#2A4C7B' }]}>Asignar Módulos</Text>
             <FlatList
                 data={usuarios}
                 keyExtractor={(item) => item.usuario_id.toString()}
                 renderItem={({ item }) => (
                     <TouchableOpacity style={styles.userItem} onPress={() => fetchModulos(item.usuario_id, item.usuario_nombre)}>
-                        <Text>{item.usuario_nombre}</Text>
+                        <Text style={{ color: isNightMode ? '#FFFFFF' : '#000000' }}>{item.usuario_nombre}</Text>
                     </TouchableOpacity>
                 )}
             />
 
             {usuarioSeleccionado && (
                 <View>
-                    <Text style={styles.subtitle}>Módulos de {nombreUsuario}</Text>
+                    <Text style={[styles.subtitle, { color: isNightMode ? '#FFFFFF' : '#000000' }]}>Módulos de {nombreUsuario}</Text>
                     <FlatList
                         data={modulos}
                         keyExtractor={(item) => item.modulo_codigo.toString()}
                         renderItem={({ item }) => (
                             <TouchableOpacity
-                                style={[styles.accesoItem, item.acceso_estado === "ACTIVO" ? styles.activo : styles.inactivo]}
+                                style={[styles.accesoItem, item.acceso_estado === "ACTIVO" ? styles.activo : styles.inactivo, { backgroundColor: isNightMode ? (item.acceso_estado === "ACTIVO" ? '#4CAF50' : '#F44336') : (item.acceso_estado === "ACTIVO" ? 'green' : 'red') }]}
                                 onPress={() => toggleAcceso(usuarioSeleccionado, item.modulo_codigo, item.acceso_estado)}
                             >
-                                <Text>{item.modulo_nombre} - {item.acceso_estado}</Text>
+                                <Text style={{ color: isNightMode ? '#FFFFFF' : '#000000' }}>{item.modulo_nombre} - {item.acceso_estado}</Text>
                             </TouchableOpacity>
                         )}
                     />
@@ -105,4 +106,3 @@ const styles = StyleSheet.create({
 });
 
 export default AsignarModulos;
-

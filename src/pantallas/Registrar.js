@@ -4,10 +4,13 @@ import CampoTexto from '../componentes/CampoTexto';
 import Boton from '../componentes/Boton';
 import { useNavigation } from '@react-navigation/native';
 import Ubicacion from '../componentes/Ubicacion';
+import { useTheme } from '../componentes/ThemeContext'; // Importa el hook del contexto
 
 const RecuperarPassword = () => {
   const navigation = useNavigation();
+  const { isNightMode } = useTheme(); // Usa el contexto para obtener el estado del modo nocturno
   const [correo, setCorreo] = useState('');
+
   const recuperarContraseña = async () => {
     try {
       const url = `${Ubicacion.API_URL}recuperar_password.php`; // La URL de tu backend PHP
@@ -36,8 +39,8 @@ const RecuperarPassword = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={[styles.text]}>Recuperar Contraseña</Text>
+    <View style={[styles.container, { backgroundColor: isNightMode ? '#121212' : '#A3D5FF' }]}>
+      <Text style={[styles.text, { color: isNightMode ? '#FFFFFF' : '#000000' }]}>Recuperar Contraseña</Text>
 
       <CampoTexto
         placeholder="Correo Electrónico"
@@ -47,7 +50,7 @@ const RecuperarPassword = () => {
         onChangeText={text => setCorreo(text)}
       />
 
-      <Boton text="Recuperar" ColorFondo='#000' onPress={recuperarContraseña} />
+      <Boton text="Recuperar" ColorFondo={isNightMode ? '#4CAF50' : '#0A3D91'} onPress={recuperarContraseña} />
     </View>
   );
 };
@@ -55,7 +58,6 @@ const RecuperarPassword = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -65,5 +67,3 @@ const styles = StyleSheet.create({
 });
 
 export default RecuperarPassword;
-
-

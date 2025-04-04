@@ -1,66 +1,65 @@
-import React,{useState,useEffect} from 'react';
-import { View, Text, PermissionsAndroid, Platform,StyleSheet } from 'react-native';
-import * as Location from 'expo-location';
-import MapView,{Marker} from 'react-native-maps';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
 
 const GPS = () => {
-    const [location, setLocation] = useState(null);
-  const getLocation = async () => {
-    try {
-      // Request permission
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.error('Location permission denied');
-        return;
-      }
+    const [coordenadas, setCoordenadas] = useState([]);
 
-      // Get current position
-      const currentLocation = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
-      setLocation(currentLocation.coords);
-    } catch (error) {
-      console.error('Error getting location:', error);
-    }
-  };
+    useEffect(() => {
+      const fetchCoordenadas = async () => {
+        try {
+            const response = await fetch('http://arturo.bonaquian.com/ProyectoFinalBacken/obtener_coordenadas.php'); // Cambia esto a tu URL
+            const data = await response.json();
+            if (data.success) {
+                // Convertir las coordenadas a números
+                const coords = data.coordenadas.map(coord => ({
+                    id: coord.id,
+                    latitude: parseFloat(coord.latitude), // Convertir a número
+                    longitude: parseFloat(coord.longitude) // Convertir a número
+                }));
+                setCoordenadas(coords);
+            } else {
+                console.error('Error al obtener coordenadas:', data.message);
+            }
+        } catch (error) {
+            console.error('Error al hacer la solicitud:', error);
+        }
+    };
 
-  useEffect(() => {
-    getLocation();
-  }, []);
+        fetchCoordenadas();
+    }, []);
 
-  if (!location) {
-    return <Text>Loading location...</Text>;
-  }
-  const mostrarCoordenadas = () => {
-    if (location) {
-      console.log("Coordenada:", location);
-      console.log("Latitude:", location.latitude);
-      console.log("Longitud:", location.longitude);
-    }
-  };
-  return (
-    
-    <View style={{ flex: 1 }}>
-      <MapView
-        style={{ flex: 1 }}
-        initialRegion={{
-          latitude: location.latitude,
-          longitude: location.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      >
-        <Marker
-          coordinate={{
-            latitude: location.latitude,
-            longitude: location.longitude,
-          }}
-          title="Your Location"
-        />
-      </MapView>
-      <Text>{mostrarCoordenadas()}</Text>
-    </View>
-    
-  );
-}
+    return (
+        <View style={styles.container}>
+            <MapView
+                style={styles.map}
+                initialRegion={{
+                    latitude: 37.78825, // Cambia esto a una latitud por defecto
+                    longitude: -122.4324, // Cambia esto a una longitud por defecto
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                }}
+            >
+                {coordenadas.map((coord) => (
+                    <Marker
+                        key={coord.id}
+                        coordinate={{ latitude: coord.latitude, longitude: coord.longitude }}
+                        title={`Registro ${coord.id}`} // Asegúrate de que tu objeto tenga un título
+                    />
+                ))}
+            </MapView>
+        </View>
+    );
+};
+
+// Estilos
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    map: {
+        flex: 1,
+    },
+});
+ 
 export default GPS;

@@ -3,9 +3,11 @@ import { Text, View, StyleSheet } from 'react-native';
 import CampoTexto from '../componentes/CampoTexto';
 import Boton from '../componentes/Boton';
 import Ubicacion from '../componentes/Ubicacion';
+import { useTheme } from '../componentes/ThemeContext'; // Importa el hook del contexto
+import Bitacora from '../componentes/Bitacora';
 
 const PantallaReset = () => {
-  //const API_URL = "http://192.168.100.122/ExamenBacken/backend1/";
+  const { isNightMode } = useTheme(); // Usa el contexto para obtener el estado del modo nocturno
   const [Usuario, setUsuario] = useState('');
 
   const desbloqueo = async () => {
@@ -24,11 +26,12 @@ const PantallaReset = () => {
       console.log(result);
       if (result === 'El usuario está ACTIVO') {
         alert('El usuario ya está activo');
-      } else if (result === 'El usuario estaba BLOQUEADO y ha sido desbloqueado') {
+      } else if (result === 'd') {
         alert('El usuario ha sido desbloqueado');
         // Navegar a la pantalla principal
         // navigation.navigate('PantallaPrincipal');
-      } else if (result === 'Usuario no existe') {
+        Bitacora.saveBitacora("La cuenta ha sido desbloqueada",Usuario);
+      } else if (result === 'n') {
         alert('Usuario no existe');
       } else {
         alert('Error desconocido');
@@ -38,11 +41,10 @@ const PantallaReset = () => {
       alert(error);
     }
   };
-  
-  
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: isNightMode ? '#121212' : '#A3D5FF' }]}>
+      <Text style={[styles.titulo, { color: isNightMode ? '#FFFFFF' : '#0A3D91' }]}>Ingrese un usuario</Text>
       <CampoTexto
         placeholder="Usuario"
         maxLength={10}
@@ -51,7 +53,7 @@ const PantallaReset = () => {
         setValor={setUsuario}
         onChangeText={(text) => setUsuario(text)}
       />
-      <Boton text="Entrar" ColorFondo='#0000ff' onPress={desbloqueo} />
+      <Boton text="Entrar" ColorFondo={isNightMode ? '#4CAF50' : '#0A3D91'} onPress={desbloqueo} />
     </View>
   );
 };
@@ -61,9 +63,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+  },
+  titulo: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
 });
 
 export default PantallaReset;
-

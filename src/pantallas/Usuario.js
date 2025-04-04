@@ -2,12 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Image, View, TextInput, Button, FlatList, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Camera } from "expo-camera";
-import { Picker } from '@react-native-picker/picker'; // Importación correcta
+import { Picker } from '@react-native-picker/picker';
+import { useTheme } from '../componentes/ThemeContext'; // Importa el hook del contexto
 
 export default function App() {
     // Variables de estado
+    const { isNightMode } = useTheme(); // Usa el contexto para obtener el estado del modo nocturno
     const [modalVisible, setModalVisible] = useState(false);
+    const [formVisible, setFormVisible] = useState(false);
     const [identificacion, setIdentificacion] = useState("");
+    const [id, setId] = useState("");
     const [nombre, setNombre] = useState("");
     const [apellido, setApellido] = useState("");
     const [correo, setCorreo] = useState("");
@@ -16,9 +20,8 @@ export default function App() {
     const [foto, setFoto] = useState(null);
     const [cargo, setCargo] = useState(""); // Nuevo estado para cargo
     const [users, setUsers] = useState([]); // Estado de usuarios
-    const [page, setPage] = useState(1);
-
-    const pageSize = 10; // Número de usuarios por página
+    const [isEdit, setIsEdit] = useState(false);
+    const [currentUser  , setCurrentUser  ] = useState(null);
 
     // Solicitar permisos para la cámara
     const requestCameraPermission = async () => {
@@ -48,35 +51,7 @@ export default function App() {
         }
     };
 
-    // Activar o desactivar usuario
-    const toggleUserStatus = async (usuario_id, nuevo_estado) => {
-        try {
-            const response = await fetch("http://arturo.bonaquian.com/ProyectoFinalBacken/usuario.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: new URLSearchParams({
-                    usuario_id,
-                    nuevo_estado,
-                }),
-            });
-
-            const result = await response.json();
-            if (result.status === "success") {
-                Alert.alert("Éxito", result.message);
-                fetchUsers(); // Refrescar la lista de usuarios
-            } else {
-                Alert.alert("Error", result.message);
-            }
-        } catch (error) {
-            console.error("Error al actualizar el estado del usuario:", error);
-            Alert.alert("Error", "No se pudo actualizar el estado del usuario.");
-        }
-    };
-
-    // Paginación de usuarios
-    const paginatedUsers = users.slice(0, page * pageSize);
+   
 
     // Mostrar usuarios al abrir el modal
     const openUserListModal = () => {
@@ -117,6 +92,7 @@ export default function App() {
 
         try {
             let formData = new FormData();
+            formData.append("usuario_id", id);
             formData.append("usuario_identificacion", identificacion);
             formData.append("usuario_nombre", nombre);
             formData.append("usuario_apellido", apellido);
@@ -135,7 +111,11 @@ export default function App() {
                 type: `image/${fileType}`,
             });
 
-            const response = await fetch("http://arturo.bonaquian.com/ProyectoFinalBacken/usuario_save.php", {
+            const endpoint = isEdit 
+                ? "http://arturo.bonaquian.com/ProyectoFinalBacken/actualizar_usuario.php" 
+                : "http://arturo.bonaquian.com/ProyectoFinalBacken/usuario_save.php";
+
+            const response = await fetch(endpoint, {
                 method: "POST",
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -149,6 +129,8 @@ export default function App() {
             if (result.status === "success") {
                 Alert.alert("Éxito", result.message);
                 limpiarCampos();
+                fetchUsers(); // Refrescar la lista de usuarios
+                setFormVisible(false);
             } else {
                 Alert.alert("Error", result.message);
             }
@@ -168,80 +150,118 @@ export default function App() {
         setPassword("");
         setFoto(null);
         setCargo(""); // Limpiamos el cargo
+        setIsEdit(false);
+    };
+
+    // Cargar datos del usuario para editar
+    const cargarUsuarioParaEditar = async (usuarioId) => {
+        try {
+            const response = await fetch(`http://arturo.bonaquian.com/ProyectoFinalBacken/usuario.php?usuario_id=${usuarioId}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+    
+            const usuario = await response.json();
+            if (usuario.usuario_id) {
+                setId(usuario.usuario_id);
+                setIdentificacion(usuario.usuario_identificacion);
+                setNombre(usuario.usuario_nombre);
+                setApellido(usuario.usuario_apellido);
+                setCorreo(usuario.usuario_correo);
+                setUsername(usuario.usuario_username);
+                setPassword(usuario.usuario_password);
+                const urlimg = "http://arturo.bonaquian.com/ProyectoFinalBacken/";
+                setFoto(usuario.usuario_foto ? urlimg + usuario.usuario_foto : null);
+                setCargo(usuario.usuario_cargo);
+                setIsEdit(true);
+                setFormVisible(true);
+            } else {
+                Alert.alert("Error", "Usuario no encontrado.");
+            }
+        } catch (error) {
+            console.error("Error al obtener los datos del usuario:", error);
+            Alert.alert("Error", "No se pudo obtener los datos del usuario.");
+        }
     };
 
     return (
-        <ScrollView style={styles.container}>
-            <Text style={styles.title}>Crear de Usuarios</Text>
+        <ScrollView style={[styles.container, { backgroundColor: isNightMode ? '#121212' : '#A3D5FF' }]}>
+            <Text style={[styles.title, { color: isNightMode ? '#FFFFFF' : '#2A4C7B' }]}>Mantenimiento de Usuarios</Text>
 
             <Button title="Listar Usuarios" onPress={openUserListModal} />
+            <Button title="Nuevo Usuario" onPress={() => {
+                limpiarCampos();
+                setFormVisible(true);
+            }} />
             <View style={styles.space} />
 
             {/* Modal para listar usuarios */}
             <Modal visible={modalVisible} animationType="slide" transparent={false} onRequestClose={() => setModalVisible(false)}>
-                <View style={styles.modalContainer}>
+                <View style={[styles.modalContainer, { backgroundColor: isNightMode ? '#444' : '#fff' }]}>
                     <Button title="Cerrar" onPress={() => setModalVisible(false)} />
-                    <Text style={styles.modalTitle}>Listado de Usuarios</Text>
+                    <Text style={[styles.modalTitle, { color: isNightMode ? '#fff' : '#000' }]}>Listado de Usuarios</Text>
 
                     <FlatList
                         style={styles.flatList}
-                        data={paginatedUsers}
-                        keyExtractor={(item) => item.usuario_id}
+                        data={users}
+                        keyExtractor={(item) => item.usuario_id.toString()}
                         ListHeaderComponent={() => (
                             <View style={styles.tableHeader}>
-                                <Text style={styles.tableHeaderText}>ID</Text>
-                                <Text style={styles.tableHeaderText}>Nombre</Text>
-                                <Text style={styles.tableHeaderText}>Estado</Text>
-                                <Text style={styles.tableHeaderText}>Acciones</Text>
+                                <Text style={[styles.tableHeaderText, { color: isNightMode ? '#fff' : '#000' }]}>ID</Text>
+                                <Text style={[styles.tableHeaderText, { color: isNightMode ? '#fff' : '#000' }]}>Nombre</Text>
+                                <Text style={[styles.tableHeaderText, { color: isNightMode ? '#fff' : '#000' }]}>Estado</Text>
+                                <Text style={[styles.tableHeaderText, { color: isNightMode ? '#fff' : '#000' }]}>Acciones</Text>
                             </View>
                         )}
                         renderItem={({ item }) => (
                             <View style={styles.tableRow}>
-                                <Text style={styles.tableCell}>{Number(item.usuario_id)}</Text>
-                                <Text style={styles.tableCell}>{item.usuario_nombre}</Text>
-                                <Text style={styles.tableCell}>{item.usuario_estado}</Text>
+                                <Text style={[styles.tableCell, { color: isNightMode ? '#fff' : '#000' }]}>{item.usuario_id}</Text>
+                                <Text style={[styles.tableCell, { color: isNightMode ? '#fff' : '#000' }]}>{item.usuario_nombre}</Text>
+                                <Text style={[styles.tableCell, { color: isNightMode ? '#fff' : '#000' }]}>{item.usuario_estado}</Text>
                                 <View style={styles.tableCell}>
                                     <Button
-                                        title={item.usuario_estado === "ACTIVO" ? "Desactivar" : "Activar"}
-                                        onPress={() => toggleUserStatus(item.usuario_id, item.usuario_estado === "ACTIVO" ? "INACTIVO" : "ACTIVO")}
+                                        title="Editar"
+                                        onPress={() => cargarUsuarioParaEditar(item.usuario_id)}
                                     />
+                                   
                                 </View>
                             </View>
                         )}
                     />
-                    {paginatedUsers.length < users.length && (
-                        <TouchableOpacity style={styles.loadMore} onPress={() => setPage(page + 1)}>
-                            <Text style={styles.loadMoreText}>Cargar más</Text>
-                        </TouchableOpacity>
-                    )}
                 </View>
             </Modal>
 
-            {/* Formulario de Registro */}
-            <TextInput style={styles.input} placeholder="Identificación" value={identificacion} onChangeText={setIdentificacion} keyboardType="numeric" />
-            <TextInput style={styles.input} placeholder="Nombre" value={nombre} onChangeText={setNombre} />
-            <TextInput style={styles.input} placeholder="Apellido" value={apellido} onChangeText={setApellido} />
-            <TextInput style={styles.input} placeholder="Correo" value={correo} onChangeText={setCorreo} keyboardType="email-address" />
-            <TextInput style={styles.input} placeholder="Username" value={username} onChangeText={setUsername} />
-            <TextInput style={styles.input} placeholder="Contraseña" value={password} onChangeText={setPassword} secureTextEntry />
+            {/* Formulario de Registro o Edición */}
+            {formVisible && (
+                <View>
+                    <TextInput style={[styles.input, { backgroundColor: isNightMode ? '#555' : '#fff', color: isNightMode ? '#fff' : '#000' }]} placeholder="Identificación" value={identificacion} onChangeText={setIdentificacion} keyboardType="numeric" />
+                    <TextInput style={[styles.input, { backgroundColor: isNightMode ? '#555' : '#fff', color: isNightMode ? '#fff' : '#000' }]} placeholder="Nombre" value={nombre} onChangeText={setNombre} />
+                    <TextInput style={[styles.input, { backgroundColor: isNightMode ? '#555' : '#fff', color: isNightMode ? '#fff' : '#000' }]} placeholder="Apellido" value={apellido} onChangeText={setApellido} />
+                    <TextInput style={[styles.input, { backgroundColor: isNightMode ? '#555' : '#fff', color: isNightMode ? '#fff' : '#000' }]} placeholder="Correo" value={correo} onChangeText={setCorreo} keyboardType="email-address" />
+                    <TextInput style={[styles.input, { backgroundColor: isNightMode ? '#555' : '#fff', color: isNightMode ? '#fff' : '#000' }]} placeholder="Username" value={username} onChangeText={setUsername} />
+                    <TextInput style={[styles.input, { backgroundColor: isNightMode ? '#555' : '#fff', color: isNightMode ? '#fff' : '#000' }]} placeholder="Contraseña" value={password} onChangeText={setPassword} secureTextEntry />
 
-            {/* Campo de cargo */}
-            <Picker
-                selectedValue={cargo}
-                onValueChange={(itemValue) => setCargo(itemValue)}
-                style={styles.seleccion}
-            >
-                <Picker.Item label="Selecciona un cargo" value="" />
-                <Picker.Item label="Gerente" value="Gerente" />
-                <Picker.Item label="Doctor" value="Doctor" />
-                <Picker.Item label="Enfermero" value="Enfermero" />
-                <Picker.Item label="Secretario" value="Secretario" />
-            </Picker>
+                    {/* Campo de cargo */}
+                    <Picker
+                        selectedValue={cargo}
+                        onValueChange={(itemValue) => setCargo(itemValue)}
+                        style={[styles.seleccion,{color: isNightMode ? '#fff' : '#000'}]}
+                    >
+                        <Picker.Item label="Selecciona un cargo" value="" />
+                        <Picker.Item label="Gerente" value="Gerente" />
+                        <Picker.Item label="Doctor" value="Doctor" />
+                        <Picker.Item label="Enfermero" value="Enfermero" />
+                        <Picker.Item label="Secretario" value="Secretario" />
+                    </Picker>
 
-            <Button title="Tomar Foto" onPress={tomarFoto} />
-            {foto && <Image source={{ uri: foto }} style={styles.foto} />}
-            <View style={styles.space} />
-            <Button title="Guardar" onPress={enviarDatos} />
+                    <Button title="Tomar Foto" onPress={tomarFoto} />
+                    {foto && <Image source={{ uri: foto }} style={styles.foto} />}
+                    <View style={styles.space} />
+                    <Button title={isEdit ? "Actualizar Usuario" : "Guardar Usuario"} onPress={enviarDatos} />
+                </View>
+            )}
         </ScrollView>
     );
 }
@@ -251,14 +271,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: "#A3D5FF",
     },
     title: {
         textAlign: "center",
         fontSize: 24,
         fontWeight: "bold",
         marginBottom: 20,
-        color: '#2A4C7B',
     },
     space: {
         height: 20,
@@ -267,15 +285,13 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: "#ccc",
         padding: 10,
-        marginTop:10,
-        marginBottom:5,
+        marginTop: 10,
+        marginBottom: 5,
         borderRadius: 5,
-        backgroundColor: "#fff",
     },
     modalContainer: {
         flex: 1,
         padding: 20,
-        backgroundColor: "#fff",
     },
     modalTitle: {
         textAlign: "center",
@@ -303,27 +319,16 @@ const styles = StyleSheet.create({
         flex: 1,
         textAlign: "center",
     },
-    loadMore: {
-        marginTop: 10,
-        paddingVertical: 10,
-        backgroundColor: "#2A4C7B",
-        alignItems: "center",
-        borderRadius: 5,
-    },
-    loadMoreText: {
-        color: "#fff",
-        fontSize: 16,
-    },
     foto: {
         width: 100,
         height: 100,
         borderRadius: 8,
         marginVertical: 10,
-    }, seleccion: {
+    },
+    seleccion: {
         borderWidth: 5,
-        marginTop:10,
-        marginBottom:10,
-        backgroundColor: "#fff",
-
-    }
+        marginTop: 10,
+        padding: 10,
+        marginBottom: 20,
+    },
 });
